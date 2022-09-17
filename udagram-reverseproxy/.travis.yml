@@ -1,0 +1,8 @@
+script:
+  - docker --version # print the version for logging
+  - docker build -t udagram-reverseproxy .
+  - docker tag udagram-reverseproxy hassantarek/udagram-reverseproxy:v1
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push hassantarek/udagram-reverseproxy:v1

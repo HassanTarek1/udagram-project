@@ -1,0 +1,8 @@
+script:
+  - docker --version # print the version for logging
+  - docker build -t udagram-frontend .
+  - docker tag udagram-frontend hassantarek/udagram-frontend:v1
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push hassantarek/udagram-frontend:v1

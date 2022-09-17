@@ -1,0 +1,10 @@
+
+script:
+  - docker --version # print the version for logging
+  - docker build -t udagram-api-feed .
+  - docker tag udagram-api-feed hassantarek/udagram-api-feed:v1
+
+after_success:
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push hassantarek/udagram-api-feed:v1
+

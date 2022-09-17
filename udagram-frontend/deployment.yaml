@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: udagram-frontend
+  labels:
+    app: udagram-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: udagram-frontend
+  template:
+    metadata:
+      labels:
+        app: udagram-frontend
+    spec:
+      containers:
+      - name: udagram-frontend
+        image: hassantarek/udagram-frontend:v1
+        ports:
+        - containerPort: 8100
+        volumeMounts:
+        - name: config
+          mountPath: "/config"
+          readOnly: true
+        env:
+        - name: POSTGRES_DB # Notice that the case is different here
+                                     # from the key name in the ConfigMap.
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap           # The ConfigMap this value comes from.
+              key: POSTGRES_DB # The key to fetch.
+        - name: AWS_BUCKET
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap           
+              key: AWS_BUCKET 
+        - name: AWS_REGION
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap           
+              key: AWS_REGION 
+        - name: AWS_PROFILE
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap           
+              key: AWS_PROFILE 
+        - name: JWT_SECRET
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap           
+              key: JWT_SECRET
+        - name: URL
+          valueFrom:
+            configMapKeyRef:
+              name: env-configmap           
+              key: URL
+        - name: POSTGRES_HOST
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRES_HOST
+        - name: POSTGRES_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRES_USERNAME
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: env-secret
+              key: POSTGRES_PASSWORD
+      volumes:
+    # You set volumes at the Pod level, then mount them into containers inside that Pod
+      - name: config
+        configMap:
+        # Provide the name of the ConfigMap you want to mount.
+          name: env-configmap
